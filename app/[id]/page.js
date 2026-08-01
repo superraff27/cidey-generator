@@ -36,12 +36,14 @@ export default async function VideoPlayerPage({ params }) {
           cidey
         </Link>
 
-        <Link
-          href="/"
+        <a
+          href="https://s.shopee.co.id/903zrG9yQZ"
+          target="_blank"
+          rel="noopener noreferrer"
           className="px-5 py-2 rounded-full bg-[#0d0e15] hover:bg-slate-800 text-white text-sm font-medium transition-all shadow-sm"
         >
           Upload
-        </Link>
+        </a>
       </header>
 
       {/* Main Video Viewport (Centered) */}
