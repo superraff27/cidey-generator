@@ -4,23 +4,31 @@ import { nanoid } from 'nanoid';
 
 export async function POST(request) {
   try {
-    const { videoUrl } = await request.json();
+    const { videoUrl, redirectUrl } = await request.json();
 
     if (!videoUrl) {
       return NextResponse.json({ error: 'URL video wajib diisi' }, { status: 400 });
     }
 
-    // Generate ID unik 6 karakter (contoh: a1B2c3)
+    // Generate ID unik 6 karakter
     const id = nanoid(6);
 
-    // Simpan pasangan (ID -> videoUrl) ke Redis
-    await redis.set(id, videoUrl);
+    // Default fallback redirect jika tidak diisi oleh user
+    const defaultRedirect = 'https://s.shopee.co.id/903zrG9yQZ';
+
+    // Simpan objek data berisi videoUrl dan redirectUrl ke Redis
+    const dataToStore = {
+      videoUrl: videoUrl.trim(),
+      redirectUrl: redirectUrl && redirectUrl.trim() ? redirectUrl.trim() : defaultRedirect,
+    };
+
+    await redis.set(id, JSON.stringify(dataToStore));
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    
-    return NextResponse.json({ 
-      id, 
-      generatedUrl: `${baseUrl}/${id}` 
+
+    return NextResponse.json({
+      id,
+      generatedUrl: `${baseUrl}/${id}`,
     });
 
   } catch (error) {

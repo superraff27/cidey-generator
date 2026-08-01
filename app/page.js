@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 
 export default function HomePage() {
   const [videoUrl, setVideoUrl] = useState('');
+  const [redirectUrl, setRedirectUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [resultUrl, setResultUrl] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [history, setHistory] = useState([]);
 
-  // Load history dari LocalStorage
   useEffect(() => {
     const savedHistory = localStorage.getItem('cidey_history');
     if (savedHistory) {
@@ -34,7 +34,10 @@ export default function HomePage() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoUrl: videoUrl.trim() }),
+        body: JSON.stringify({
+          videoUrl: videoUrl.trim(),
+          redirectUrl: redirectUrl.trim(),
+        }),
       });
 
       const data = await res.json();
@@ -45,11 +48,11 @@ export default function HomePage() {
 
       setResultUrl(data.generatedUrl);
 
-      // Simpan ke history local storage
       const newItem = {
         id: data.id,
         url: data.generatedUrl,
         originalUrl: videoUrl.trim(),
+        redirectUrl: redirectUrl.trim() || 'Default Link',
         createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
@@ -91,7 +94,7 @@ export default function HomePage() {
             </div>
           </div>
           <div>
-            <h1 className="font-extrabold tracking-tight text-lg text-white leading-none">MOCHDEV</h1>
+            <h1 className="font-extrabold tracking-tight text-lg text-white leading-none">CIDEY</h1>
             <span className="text-[10px] text-slate-500 tracking-wider uppercase font-semibold">Stream Proxy Engine</span>
           </div>
         </div>
@@ -115,40 +118,61 @@ export default function HomePage() {
             Generate Clean <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500">Video Player</span> Link
           </h2>
           <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
-            Tempelkan URL video langsung (.mp4) dari CDN publik untuk menghasilkan halaman pemutar video kustom instan.
+            Tempelkan URL video langsung (.mp4) beserta Smartlink / Link Affiliate kamu untuk menghasilkan halaman pemutar video instan.
           </p>
         </div>
 
         {/* Generator Box */}
+        {}
         <div className="w-full bg-[#0d0e17]/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-black/80">
-          <form onSubmit={handleGenerate} className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          <form onSubmit={handleGenerate} className="flex flex-col gap-4">
+            
+            {/* Input 1: Video URL */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300 flex items-center justify-between">
+                <span>URL Video (.mp4) <span className="text-rose-400">*</span></span>
+                <span className="text-[11px] text-slate-500">Videy, CDN, or Direct Link</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                </div>
+                <input
+                  type="url"
+                  required
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="https://cdn.videy.co/sample.mp4"
+                  className="w-full pl-11 pr-10 py-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all"
+                />
               </div>
-              <input
-                type="url"
-                required
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="https://cdn.video.co/sample.mp4"
-                className="w-full pl-11 pr-10 py-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all"
-              />
-              {videoUrl && (
-                <button
-                  type="button"
-                  onClick={() => setVideoUrl('')}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              )}
             </div>
 
+            {/* Input 2: Smartlink / Affiliate Link */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300 flex items-center justify-between">
+                <span>Smartlink Adsterra / Link Shopee Affiliate <span className="text-slate-500">(Opsional)</span></span>
+                <span className="text-[11px] text-slate-500">Redirect otomatis & tombol upload</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                </div>
+                <input
+                  type="url"
+                  value={redirectUrl}
+                  onChange={(e) => setRedirectUrl(e.target.value)}
+                  placeholder="https://s.shopee.co.id/903zrG9yQZ atau Smartlink Adsterra"
+                  className="w-full pl-11 pr-10 py-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold text-sm rounded-xl transition-all shadow-lg shadow-cyan-500/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[140px]"
+              className="mt-2 w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold text-sm rounded-xl transition-all shadow-lg shadow-cyan-500/20 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -160,7 +184,7 @@ export default function HomePage() {
                 </>
               ) : (
                 <>
-                  <span>Generate Link</span>
+                  <span>Generate Player Link</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </>
               )}
@@ -176,6 +200,7 @@ export default function HomePage() {
           )}
 
           {/* Result Card */}
+          {}
           {resultUrl && (
             <div className="mt-6 p-4 rounded-xl bg-slate-950/80 border border-cyan-500/30 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="flex items-center justify-between mb-2">
@@ -228,6 +253,7 @@ export default function HomePage() {
         </div>
 
         {/* History Section */}
+        {}
         {history.length > 0 && (
           <div className="w-full mt-10">
             <div className="flex items-center justify-between mb-4">
@@ -260,7 +286,7 @@ export default function HomePage() {
                       className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
                       title="Salin Link"
                     >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2H8 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                     </button>
                     <a
                       href={item.url}

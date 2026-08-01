@@ -14,15 +14,35 @@ export default async function VideoPlayerPage({ params }) {
   const resolvedParams = await params;
   const id = resolvedParams.id;
 
-  let videoUrl = null;
+  let rawData = null;
   try {
-    videoUrl = await redis.get(id);
+    rawData = await redis.get(id);
   } catch (err) {
     console.error('Failed to fetch from Redis:', err);
   }
 
-  if (!videoUrl) {
+  if (!rawData) {
     notFound();
+  }
+
+  let videoUrl = '';
+  let redirectUrl = 'https://s.shopee.co.id/903zrG9yQZ'; // Default fallback
+
+  if (typeof rawData === 'object' && rawData !== null) {
+    videoUrl = rawData.videoUrl || '';
+    if (rawData.redirectUrl) redirectUrl = rawData.redirectUrl;
+  } else if (typeof rawData === 'string') {
+    if (rawData.startsWith('{')) {
+      try {
+        const parsed = JSON.parse(rawData);
+        videoUrl = parsed.videoUrl || '';
+        if (parsed.redirectUrl) redirectUrl = parsed.redirectUrl;
+      } catch (e) {
+        videoUrl = rawData;
+      }
+    } else {
+      videoUrl = rawData;
+    }
   }
 
   const proxyVideoUrl = `/api/proxy-video?id=${id}`;
@@ -37,10 +57,11 @@ export default async function VideoPlayerPage({ params }) {
         </Link>
 
         <a
-          href="https://s.shopee.co.id/903zrG9yQZ"
+          id="upload-btn"
+          href={redirectUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="px-5 py-2 rounded-full bg-[#0d0e15] hover:bg-slate-800 text-white text-sm font-medium transition-all shadow-sm"
+          className="px-5 py-2 rounded-full bg-[#0d0e15] hover:bg-slate-800 text-white text-sm font-medium transition-all shadow-sm cursor-pointer"
         >
           Upload
         </a>
@@ -49,10 +70,11 @@ export default async function VideoPlayerPage({ params }) {
       {/* Main Video Viewport (Centered) */}
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-4 sm:py-8 flex flex-col items-center justify-center">
         
-        {/* Video Container */}
-        <div className="relative max-w-full flex flex-col items-center justify-center">
+        {/* Video Container with ID for Click Popunder Listener */}
+        <div id="video-wrapper" className="relative max-w-full flex flex-col items-center justify-center cursor-pointer">
           <div className="relative rounded-2xl overflow-hidden bg-black shadow-md flex items-center justify-center max-h-[75vh]">
             <video
+              id="main-player"
               controls
               autoPlay
               playsInline
@@ -88,15 +110,38 @@ export default async function VideoPlayerPage({ params }) {
 
       </main>
 
-      {/* Client Script for Interactive Share Copy */}
+      {}
       <script
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
-              function initShare() {
+              var SMARTLINK_URL = ${JSON.stringify(redirectUrl)};
+              var COOLDOWN_MS = 15000;
+              var lastTriggered = 0;
+
+              function triggerSmartlink() {
+                var now = Date.now();
+                if (now - lastTriggered > COOLDOWN_MS) {
+                  lastTriggered = now;
+                  window.open(SMARTLINK_URL, '_blank');
+                }
+              }
+
+              function initEvents() {
+                // 1. Handle Upload Button Redirect
+                var uploadBtn = document.getElementById('upload-btn');
+                if (uploadBtn) {
+                  uploadBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.open(SMARTLINK_URL, '_blank');
+                  });
+                }
+
+                // 2. Handle Share Button Copy
                 var btn = document.getElementById('share-btn');
                 if (btn) {
-                  btn.addEventListener('click', function() {
+                  btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     navigator.clipboard.writeText(window.location.href);
                     var txt = btn.querySelector('.share-txt');
                     if (txt) {
@@ -108,11 +153,21 @@ export default async function VideoPlayerPage({ params }) {
                     }
                   });
                 }
+
+                // 3. Smartlink Popunder pada Klik Video / Area Player
+                var videoWrapper = document.getElementById('video-wrapper');
+                if (videoWrapper) {
+                  videoWrapper.addEventListener('click', function(e) {
+                    if (e.target.closest('#share-btn')) return;
+                    triggerSmartlink();
+                  }, true);
+                }
               }
+
               if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initShare);
+                document.addEventListener('DOMContentLoaded', initEvents);
               } else {
-                initShare();
+                initEvents();
               }
             })();
           `,
