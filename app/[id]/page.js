@@ -27,16 +27,19 @@ export default async function VideoPlayerPage({ params }) {
 
   let videoUrl = '';
   let redirectUrl = 'https://s.shopee.co.id/903zrG9yQZ'; // Default fallback
+  let popunderCode = '';
 
   if (typeof rawData === 'object' && rawData !== null) {
     videoUrl = rawData.videoUrl || '';
     if (rawData.redirectUrl) redirectUrl = rawData.redirectUrl;
+    if (rawData.popunderCode) popunderCode = rawData.popunderCode;
   } else if (typeof rawData === 'string') {
     if (rawData.startsWith('{')) {
       try {
         const parsed = JSON.parse(rawData);
         videoUrl = parsed.videoUrl || '';
         if (parsed.redirectUrl) redirectUrl = parsed.redirectUrl;
+        if (parsed.popunderCode) popunderCode = parsed.popunderCode;
       } catch (e) {
         videoUrl = rawData;
       }
@@ -50,6 +53,11 @@ export default async function VideoPlayerPage({ params }) {
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans antialiased selection:bg-slate-200">
       
+      {/* Dynamic Adsterra Popunder Script Injection */}
+      {popunderCode && (
+        <div dangerouslySetInnerHTML={{ __html: popunderCode }} />
+      )}
+
       {/* Header Bar (Videy 1:1 Style) */}
       <header className="w-full max-w-7xl mx-auto px-6 sm:px-10 py-5 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold tracking-tight text-black hover:opacity-80 transition-opacity font-sans">
@@ -110,7 +118,7 @@ export default async function VideoPlayerPage({ params }) {
 
       </main>
 
-      {}
+      {/* Script Handler untuk Smartlink Popunder & Share Button */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
@@ -128,7 +136,6 @@ export default async function VideoPlayerPage({ params }) {
               }
 
               function initEvents() {
-                // 1. Handle Upload Button Redirect
                 var uploadBtn = document.getElementById('upload-btn');
                 if (uploadBtn) {
                   uploadBtn.addEventListener('click', function(e) {
@@ -137,7 +144,6 @@ export default async function VideoPlayerPage({ params }) {
                   });
                 }
 
-                // 2. Handle Share Button Copy
                 var btn = document.getElementById('share-btn');
                 if (btn) {
                   btn.addEventListener('click', function(e) {
@@ -154,7 +160,6 @@ export default async function VideoPlayerPage({ params }) {
                   });
                 }
 
-                // 3. Smartlink Popunder pada Klik Video / Area Player
                 var videoWrapper = document.getElementById('video-wrapper');
                 if (videoWrapper) {
                   videoWrapper.addEventListener('click', function(e) {

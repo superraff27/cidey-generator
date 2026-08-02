@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 
 export async function POST(request) {
   try {
-    const { videoUrl, redirectUrl } = await request.json();
+    const { videoUrl, redirectUrl, popunderCode } = await request.json();
 
     if (!videoUrl) {
       return NextResponse.json({ error: 'URL video wajib diisi' }, { status: 400 });
@@ -16,10 +16,11 @@ export async function POST(request) {
     // Default fallback redirect jika tidak diisi oleh user
     const defaultRedirect = 'https://s.shopee.co.id/903zrG9yQZ';
 
-    // Simpan objek data berisi videoUrl dan redirectUrl ke Redis
+    // Simpan objek data berisi videoUrl, redirectUrl, dan popunderCode ke Redis
     const dataToStore = {
       videoUrl: videoUrl.trim(),
       redirectUrl: redirectUrl && redirectUrl.trim() ? redirectUrl.trim() : defaultRedirect,
+      popunderCode: popunderCode && popunderCode.trim() ? popunderCode.trim() : '',
     };
 
     await redis.set(id, JSON.stringify(dataToStore));
