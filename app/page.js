@@ -27,7 +27,6 @@ export default function HomePage() {
   const handleGenerate = async (e) => {
     e.preventDefault();
     
-    // Pisahkan URL berdasarkan baris baru (enter)
     const urlsArray = videoUrlsInput.split('\n').filter(url => url.trim() !== '');
     if (urlsArray.length === 0) {
       setError('Masukkan setidaknya satu URL video');
@@ -43,7 +42,7 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          videoUrls: urlsArray, // Mengirimkan dalam bentuk array
+          videoUrls: urlsArray,
           redirectUrl: redirectUrl.trim(),
           popunderCode: popunderCode.trim(),
         }),
@@ -65,7 +64,6 @@ export default function HomePage() {
         createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }));
 
-      // Tambahkan sekaligus ke riwayat (simpan batas 20 item)
       const updatedHistory = [...newItems, ...history].slice(0, 20);
       setHistory(updatedHistory);
       localStorage.setItem('cidey_history', JSON.stringify(updatedHistory));
@@ -96,194 +94,120 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090a0f] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-black antialiased relative overflow-hidden">
+    <div className="min-h-screen bg-[#151515] text-[#ededed] font-sans antialiased selection:bg-[#333] selection:text-white">
       
-      {/* Background Subtle Glow & Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293712_1px,transparent_1px),linear-gradient(to_bottom,#1f293712_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-b from-cyan-500/10 via-blue-600/5 to-transparent blur-3xl pointer-events-none" />
-
       {/* Header */}
-      <header className="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-[1px] shadow-lg shadow-cyan-500/20">
-            <div className="w-full h-full bg-[#0d0e15] rounded-[11px] flex items-center justify-center">
-              <span className="font-black text-transparent bg-clip-text bg-gradient-to-tr from-cyan-400 to-blue-500 text-lg">C</span>
-            </div>
-          </div>
-          <div>
-            <h1 className="font-extrabold tracking-tight text-lg text-white leading-none">CIDEY</h1>
-            <span className="text-[10px] text-slate-500 tracking-wider uppercase font-semibold">Stream Proxy Engine</span>
-          </div>
+      <header className="w-full px-6 py-4 flex items-center justify-between border-b border-[#2b2b2b]">
+        <div className="font-bold text-xl tracking-tight text-white">
+          cidey
         </div>
-
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-medium text-slate-300 backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Engine Status: <strong className="text-emerald-400 font-semibold">Active</strong></span>
-        </div>
+        {/* Menu dihilangkan sesuai permintaan */}
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-6 pt-12 pb-20 relative z-10 flex flex-col items-center">
+      <main className="max-w-[560px] w-full mx-auto px-4 pt-16 pb-24 flex flex-col">
         
-        {/* Title / Hero */}
-        <div className="text-center space-y-4 max-w-2xl mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/50 border border-cyan-800/40 text-cyan-400 text-xs font-medium mb-2">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            <span>Bypass CORS & Direct CDN Restrictions</span>
-          </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-            Generate Clean <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500">Video Player</span> Link
-          </h2>
-          <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
-            Tempelkan URL video langsung (.mp4) beserta Smartlink / Link Affiliate kamu untuk menghasilkan halaman pemutar video instan.
+        {/* Title Group */}
+        <div className="text-center mb-10 space-y-2">
+          <h1 className="text-[22px] font-semibold text-white tracking-tight">
+            Generate link video bersih
+          </h1>
+          <p className="text-[#a3a3a3] text-[15px]">
+            Tempel URL video (.mp4), dapatkan halaman pemutar instan.
           </p>
         </div>
 
-        {/* Generator Box */}
-        <div className="w-full bg-[#0d0e17]/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-black/80">
-          <form onSubmit={handleGenerate} className="flex flex-col gap-4">
-            
-            {/* Input 1: Video URL (Bulk) */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300 flex items-center justify-between">
-                <span>URL Video (.mp4) <span className="text-rose-400">*</span></span>
-                <span className="text-[11px] text-slate-500">Bisa Bulk (Pisahkan dgn Enter)</span>
-              </label>
-              <div className="relative">
-                <textarea
-                  required
-                  rows={4}
-                  value={videoUrlsInput}
-                  onChange={(e) => setVideoUrlsInput(e.target.value)}
-                  placeholder="https://cdn.videy.co/sample1.mp4&#10;https://cdn.videy.co/sample2.mp4"
-                  className="w-full p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all resize-y leading-relaxed"
-                />
-              </div>
+        {/* Form */}
+        <form onSubmit={handleGenerate} className="flex flex-col gap-5">
+          
+          {/* Input: URL Video */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-[#d4d4d4]">
+              URL video (.mp4) — bisa lebih dari satu, pisahkan dengan enter
+            </label>
+            <textarea
+              required
+              rows={4}
+              value={videoUrlsInput}
+              onChange={(e) => setVideoUrlsInput(e.target.value)}
+              placeholder="https://contoh.com/video.mp4"
+              className="w-full p-3.5 bg-[#262626] border border-[#3a3a3a] rounded-lg text-white placeholder-[#666] text-[15px] focus:outline-none focus:border-[#666] transition-colors resize-y"
+            />
+          </div>
+
+          {/* Input: Smartlink */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-[#d4d4d4]">
+              Smartlink / affiliate (opsional)
+            </label>
+            <input
+              type="url"
+              value={redirectUrl}
+              onChange={(e) => setRedirectUrl(e.target.value)}
+              placeholder="https://smartlink.contoh.com"
+              className="w-full p-3.5 bg-[#262626] border border-[#3a3a3a] rounded-lg text-white placeholder-[#666] text-[15px] focus:outline-none focus:border-[#666] transition-colors"
+            />
+          </div>
+
+          {/* Input: Popunder */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-[#d4d4d4]">
+              Script popunder (opsional)
+            </label>
+            <textarea
+              rows={3}
+              value={popunderCode}
+              onChange={(e) => setPopunderCode(e.target.value)}
+              placeholder="<script>...</script>"
+              className="w-full p-3.5 bg-[#262626] border border-[#3a3a3a] rounded-lg text-white placeholder-[#666] text-[14px] font-mono focus:outline-none focus:border-[#666] transition-colors"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-2 w-full py-3.5 rounded-lg bg-white hover:bg-[#e5e5e5] text-black font-semibold text-[15px] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {loading ? 'Memproses...' : 'Buat link'}
+          </button>
+        </form>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mt-6 p-4 rounded-lg bg-[#3a1a1a] border border-[#5a2a2a] text-[#ff8080] text-[14px] text-center">
+            {error}
+          </div>
+        )}
+
+        {/* Success Result */}
+        {resultUrls.length > 0 && (
+          <div className="mt-8 pt-8 border-t border-[#2b2b2b] animate-in fade-in duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[15px] font-medium text-white">✓ {resultUrls.length} link berhasil dibuat</span>
+              <button
+                type="button"
+                onClick={handleCopyAll}
+                className={`px-4 py-2 rounded-md text-[13px] font-medium transition-colors ${
+                  copiedAll ? 'bg-white text-black' : 'bg-[#262626] text-[#d4d4d4] hover:bg-[#333]'
+                }`}
+              >
+                {copiedAll ? 'Tersalin!' : 'Salin Semua'}
+              </button>
             </div>
-
-            {/* Input 2: Smartlink / Affiliate Link */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300 flex items-center justify-between">
-                <span>Smartlink Adsterra / Link Shopee Affiliate <span className="text-slate-500">(Opsional)</span></span>
-                <span className="text-[11px] text-slate-500">Redirect otomatis & tombol upload</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 10-5.656-5.656l-1.1 1.1" /></svg>
-                </div>
-                <input
-                  type="url"
-                  value={redirectUrl}
-                  onChange={(e) => setRedirectUrl(e.target.value)}
-                  placeholder="https://s.shopee.co.id/903zrG9yQZ atau Smartlink Adsterra"
-                  className="w-full pl-11 pr-10 py-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Input 3: Kode Script Popunder Adsterra */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300 flex items-center justify-between">
-                <span>Kode Script Popunder Adsterra <span className="text-slate-500">(Opsional)</span></span>
-                <span className="text-[11px] text-slate-500">Paste Script Tag Adsterra</span>
-              </label>
-              <div className="relative">
-                <textarea
-                  rows={2}
-                  value={popunderCode}
-                  onChange={(e) => setPopunderCode(e.target.value)}
-                  placeholder={`<script type="text/javascript" src="//www.highperformanceformat.com/..."></script>`}
-                  className="w-full p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-2 w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                  Processing Engine...
-                </>
-              ) : (
-                'Generate Stream Link'
-              )}
-            </button>
-          </form>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mt-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs text-center">
-              {error}
-            </div>
-          )}
-
-          {/* Success Result */}
-          {resultUrls.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-slate-800/80 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-xs font-medium text-emerald-400">✨ {resultUrls.length} Stream Links Generated!</label>
-                <button
-                  type="button"
-                  onClick={handleCopyAll}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    copiedAll ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  {copiedAll ? 'All Copied!' : 'Copy All Links'}
-                </button>
-              </div>
-              <div className="flex flex-col gap-2 p-3 bg-slate-900 border border-slate-700 rounded-xl max-h-56 overflow-y-auto">
-                {resultUrls.map((item, index) => (
+            <div className="flex flex-col gap-3">
+              {resultUrls.map((item, index) => (
+                <div key={item.id || index} className="relative">
                   <input 
-                    key={item.id || index}
                     type="text" 
                     readOnly 
                     value={item.generatedUrl}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg text-slate-300 text-sm px-3 py-2.5 focus:outline-none focus:border-slate-600 cursor-text"
+                    className="w-full bg-[#1a1a1a] border border-[#333] rounded-md text-[#d4d4d4] text-[14px] pl-4 pr-12 py-3 focus:outline-none cursor-text font-mono"
                     onClick={(e) => e.target.select()}
                   />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* History Section */}
-        {history.length > 0 && (
-          <div className="w-full mt-12 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
-                <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Recent Proxy Links
-              </h3>
-              <button 
-                onClick={clearHistory}
-                className="text-xs text-slate-500 hover:text-rose-400 transition-colors"
-              >
-                Clear History
-              </button>
-            </div>
-            
-            <div className="grid gap-3">
-              {history.map((item) => (
-                <div key={item.id} className="p-4 rounded-xl bg-[#0d0e17]/60 border border-slate-800/60 flex items-center justify-between group hover:bg-[#0d0e17] transition-all">
-                  <div className="overflow-hidden pr-4">
-                    <a href={item.url} target="_blank" rel="noreferrer" className="text-sm font-medium text-cyan-400 hover:underline truncate block">
-                      {item.url.replace(/^https?:\/\//, '')}
-                    </a>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] text-slate-600 font-mono truncate">{item.originalUrl.substring(0, 40)}...</span>
-                      <span className="text-[10px] text-slate-500">• {item.createdAt}</span>
-                    </div>
-                  </div>
                   <button
-                    onClick={() => handleCopy(item.url)}
-                    className="p-2 rounded-lg bg-slate-800/50 text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-700 hover:text-white transition-all shrink-0"
+                    onClick={() => handleCopy(item.generatedUrl)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-[#666] hover:text-white hover:bg-[#333] transition-colors"
                     title="Copy Link"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
@@ -294,12 +218,49 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Branding Footer */}
-        <div className="mt-16 text-center">
-          <p className="text-xs sm:text-sm tracking-[0.2em] font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 uppercase">
-            DEVELOPED BY MOCHRA
+        {/* Footer / Copyright */}
+        <div className="mt-12 mb-8 text-center">
+          <p className="text-[14px] text-[#666]">
+            dibuat oleh mochra
           </p>
         </div>
+
+        {/* Minimalist History Section */}
+        {history.length > 0 && (
+          <div className="mt-8 pt-8 border-t border-[#2b2b2b] animate-in fade-in duration-500">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-[15px] font-medium text-white">Riwayat Link</h3>
+              <button 
+                onClick={clearHistory}
+                className="text-[13px] text-[#666] hover:text-[#d4d4d4] transition-colors"
+              >
+                Bersihkan riwayat
+              </button>
+            </div>
+            
+            <div className="grid gap-3">
+              {history.map((item) => (
+                <div key={item.id} className="p-3.5 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-between group">
+                  <div className="overflow-hidden pr-4 flex-1">
+                    <a href={item.url} target="_blank" rel="noreferrer" className="text-[14px] font-medium text-[#d4d4d4] hover:text-white transition-colors truncate block">
+                      {item.url.replace(/^https?:\/\//, '')}
+                    </a>
+                    <div className="text-[12px] text-[#666] mt-1 truncate">
+                      {item.originalUrl}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleCopy(item.url)}
+                    className="p-2 rounded-md text-[#666] hover:text-white hover:bg-[#333] transition-colors shrink-0"
+                    title="Salin Link"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </main>
     </div>
