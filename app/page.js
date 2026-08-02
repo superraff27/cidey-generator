@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 
 export default function HomePage() {
-  const [videoUrl, setVideoUrl] = useState('');
+  const [videoUrlsInput, setVideoUrlsInput] = useState('');
   const [redirectUrl, setRedirectUrl] = useState('');
   const [popunderCode, setPopunderCode] = useState('');
   const [loading, setLoading] = useState(false);
-  const [resultUrl, setResultUrl] = useState('');
+  const [resultUrls, setResultUrls] = useState([]);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [copiedAll, setCopiedAll] = useState(false);
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
@@ -25,18 +26,24 @@ export default function HomePage() {
 
   const handleGenerate = async (e) => {
     e.preventDefault();
-    if (!videoUrl.trim()) return;
+    
+    // Pisahkan URL berdasarkan baris baru (enter)
+    const urlsArray = videoUrlsInput.split('\n').filter(url => url.trim() !== '');
+    if (urlsArray.length === 0) {
+      setError('Masukkan setidaknya satu URL video');
+      return;
+    }
 
     setLoading(true);
     setError('');
-    setResultUrl('');
+    setResultUrls([]);
 
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          videoUrl: videoUrl.trim(),
+          videoUrls: urlsArray, // Mengirimkan dalam bentuk array
           redirectUrl: redirectUrl.trim(),
           popunderCode: popunderCode.trim(),
         }),
@@ -48,17 +55,18 @@ export default function HomePage() {
         throw new Error(data.error || 'Gagal memproses link');
       }
 
-      setResultUrl(data.generatedUrl);
+      setResultUrls(data.results);
 
-      const newItem = {
-        id: data.id,
-        url: data.generatedUrl,
-        originalUrl: videoUrl.trim(),
+      const newItems = data.results.map(item => ({
+        id: item.id,
+        url: item.generatedUrl,
+        originalUrl: item.originalUrl,
         redirectUrl: redirectUrl.trim() || 'Default Link',
         createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
+      }));
 
-      const updatedHistory = [newItem, ...history.slice(0, 9)];
+      // Tambahkan sekaligus ke riwayat (simpan batas 20 item)
+      const updatedHistory = [...newItems, ...history].slice(0, 20);
       setHistory(updatedHistory);
       localStorage.setItem('cidey_history', JSON.stringify(updatedHistory));
 
@@ -67,6 +75,13 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCopyAll = () => {
+    const textToCopy = resultUrls.map(r => r.generatedUrl).join('\n');
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedAll(true);
+    setTimeout(() => setCopiedAll(false), 2000);
   };
 
   const handleCopy = (text) => {
@@ -128,23 +143,20 @@ export default function HomePage() {
         <div className="w-full bg-[#0d0e17]/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-black/80">
           <form onSubmit={handleGenerate} className="flex flex-col gap-4">
             
-            {/* Input 1: Video URL */}
+            {/* Input 1: Video URL (Bulk) */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-slate-300 flex items-center justify-between">
                 <span>URL Video (.mp4) <span className="text-rose-400">*</span></span>
-                <span className="text-[11px] text-slate-500">Videy, CDN, or Direct Link</span>
+                <span className="text-[11px] text-slate-500">Bisa Bulk (Pisahkan dgn Enter)</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                </div>
-                <input
-                  type="url"
+                <textarea
                   required
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="https://cdn.videy.co/sample.mp4"
-                  className="w-full pl-11 pr-10 py-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all"
+                  rows={4}
+                  value={videoUrlsInput}
+                  onChange={(e) => setVideoUrlsInput(e.target.value)}
+                  placeholder="https://cdn.videy.co/sample1.mp4&#10;https://cdn.videy.co/sample2.mp4"
+                  className="w-full p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all resize-y leading-relaxed"
                 />
               </div>
             </div>
@@ -211,24 +223,31 @@ export default function HomePage() {
           )}
 
           {/* Success Result */}
-          {resultUrl && (
+          {resultUrls.length > 0 && (
             <div className="mt-6 pt-6 border-t border-slate-800/80 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <label className="block text-xs font-medium text-emerald-400 mb-2">✨ Stream Link Generated!</label>
-              <div className="flex items-center gap-2 p-1.5 bg-slate-900 border border-slate-700 rounded-xl">
-                <input 
-                  type="text" 
-                  readOnly 
-                  value={resultUrl}
-                  className="flex-1 bg-transparent border-none text-slate-300 text-sm px-3 focus:outline-none"
-                />
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-xs font-medium text-emerald-400">✨ {resultUrls.length} Stream Links Generated!</label>
                 <button
-                  onClick={() => handleCopy(resultUrl)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    copied ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  type="button"
+                  onClick={handleCopyAll}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    copiedAll ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                   }`}
                 >
-                  {copied ? 'Copied!' : 'Copy'}
+                  {copiedAll ? 'All Copied!' : 'Copy All Links'}
                 </button>
+              </div>
+              <div className="flex flex-col gap-2 p-3 bg-slate-900 border border-slate-700 rounded-xl max-h-56 overflow-y-auto">
+                {resultUrls.map((item, index) => (
+                  <input 
+                    key={item.id || index}
+                    type="text" 
+                    readOnly 
+                    value={item.generatedUrl}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg text-slate-300 text-sm px-3 py-2.5 focus:outline-none focus:border-slate-600 cursor-text"
+                    onClick={(e) => e.target.select()}
+                  />
+                ))}
               </div>
             </div>
           )}
