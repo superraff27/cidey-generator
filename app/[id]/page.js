@@ -61,7 +61,7 @@ export default async function VideoPlayerPage({ params }) {
       {/* Header Bar (Videy 1:1 Style) */}
       <header className="w-full max-w-7xl mx-auto px-6 sm:px-10 py-5 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold tracking-tight text-black hover:opacity-80 transition-opacity font-sans">
-          cidey
+          CIDEY
         </Link>
 
         <a
@@ -112,7 +112,7 @@ export default async function VideoPlayerPage({ params }) {
         {/* Developer Branding */}
         <div className="mt-12 text-center">
           <p className="text-[11px] tracking-widest font-extrabold text-slate-400 uppercase">
-            DEVELOPED BY MOCHRA
+            DEVELOPED by CIDEYOU
           </p>
         </div>
 
@@ -180,5 +180,5 @@ export default async function VideoPlayerPage({ params }) {
       />
 
     </div>
-  );
+  );4
 }

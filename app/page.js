@@ -99,7 +99,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="w-full px-6 py-4 flex items-center justify-between border-b border-[#2b2b2b]">
         <div className="font-bold text-xl tracking-tight text-white">
-          cidey
+          CIDEY GENERATOR MP4
         </div>
         {/* Menu dihilangkan sesuai permintaan */}
       </header>
@@ -221,7 +221,7 @@ export default function HomePage() {
         {/* Footer / Copyright */}
         <div className="mt-12 mb-8 text-center">
           <p className="text-[14px] text-[#666]">
-            dibuat oleh mochra
+            Developed By Admin
           </p>
         </div>
 
