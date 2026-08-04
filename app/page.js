@@ -150,7 +150,7 @@ export default function HomePage() {
               type="url"
               value={redirectUrl}
               onChange={(e) => setRedirectUrl(e.target.value)}
-              placeholder="https://smartlink.contoh.com"
+              placeholder="https://www.effectivecpmnetwork.com/zs3niu4u?key=6b38ecd31f14c595c84cec8e7112285a"
               className="w-full p-3.5 bg-[#262626] border border-[#3a3a3a] rounded-lg text-white placeholder-[#666] text-[15px] focus:outline-none focus:border-[#666] transition-colors"
             />
           </div>
@@ -239,7 +239,7 @@ export default function HomePage() {
         {/* Footer / Copyright */}
         <div className="mt-12 mb-8 text-center">
           <p className="text-[14px] text-[#666]">
-            dibuat oleh mochra
+            DEVELOPED BY ADMIN
           </p>
         </div>
 
