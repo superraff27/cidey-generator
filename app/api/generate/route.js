@@ -22,6 +22,10 @@ export async function POST(request) {
     const finalRedirect = redirectUrl && redirectUrl.trim() ? redirectUrl.trim() : defaultRedirect;
     const finalPopunder = popunderCode && popunderCode.trim() ? popunderCode.trim() : '';
     const finalSocialBar = socialBarCode && socialBarCode.trim() ? socialBarCode.trim() : '';
+    
+    // 3 BARIS INI YANG BENAR (Jangan ada yang terlewat ya)
+    const host = request.headers.get('host') || 'localhost:3000';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
 
     const results = [];
