@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Script from 'next/script'; // 1. Import next/script untuk injeksi iklan yang aman
 
 export default function HomePage() {
   const [videoUrlsInput, setVideoUrlsInput] = useState('');
   const [redirectUrl, setRedirectUrl] = useState('');
   const [popunderCode, setPopunderCode] = useState('');
+  const [socialBarCode, setSocialBarCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resultUrls, setResultUrls] = useState([]);
   const [error, setError] = useState('');
@@ -46,6 +46,7 @@ export default function HomePage() {
           videoUrls: urlsArray,
           redirectUrl: redirectUrl.trim(),
           popunderCode: popunderCode.trim(),
+          socialBarCode: socialBarCode.trim(),
         }),
       });
 
@@ -108,11 +109,6 @@ export default function HomePage() {
       {/* Main Content */}
       <main className="max-w-[560px] w-full mx-auto px-4 pt-16 pb-24 flex flex-col">
         
-        {/* --- INJEKSI SCRIPT SOCIAL BAR ADSTERRA --- */}
-        {/* Hapus tanda komentar {/* ... *} dan ganti src dengan URL script Social Bar kamu */}
-         <Script src="//pl30640909.effectivecpmnetwork.com/e4/4a/d8/e44ad864df823f2ad1710bd60b055a3f.js" strategy="lazyOnload" />
-        {/* ------------------------------------------- */}
-
         {/* Title Group */}
         <div className="text-center mb-10 space-y-2">
           <h1 className="text-[22px] font-semibold text-white tracking-tight">
@@ -150,7 +146,7 @@ export default function HomePage() {
               type="url"
               value={redirectUrl}
               onChange={(e) => setRedirectUrl(e.target.value)}
-              placeholder="https://www.effectivecpmnetwork.com/zs3niu4u?key=6b38ecd31f14c595c84cec8e7112285a"
+              placeholder="https://smartlink.contoh.com"
               className="w-full p-3.5 bg-[#262626] border border-[#3a3a3a] rounded-lg text-white placeholder-[#666] text-[15px] focus:outline-none focus:border-[#666] transition-colors"
             />
           </div>
@@ -169,6 +165,20 @@ export default function HomePage() {
             />
           </div>
 
+          {/* Input: Social Bar */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-[#d4d4d4]">
+              Script social bar (opsional)
+            </label>
+            <textarea
+              rows={3}
+              value={socialBarCode}
+              onChange={(e) => setSocialBarCode(e.target.value)}
+              placeholder="<script>...</script>"
+              className="w-full p-3.5 bg-[#262626] border border-[#3a3a3a] rounded-lg text-white placeholder-[#666] text-[14px] font-mono focus:outline-none focus:border-[#666] transition-colors"
+            />
+          </div>
+
           {/* Submit Button */}
           <button
             type="submit"
@@ -178,18 +188,6 @@ export default function HomePage() {
             {loading ? 'Memproses...' : 'Buat link'}
           </button>
         </form>
-
-        {/* --- SLOT IKLAN VISUAL (BANNER / NATIVE ADS) STRATEGIS --- */}
-        <div className="mt-8 flex flex-col items-center justify-center w-full min-h-[60px] bg-[#1a1a1a]/40 border border-[#2b2b2b]/50 rounded-lg p-2">
-            <span className="text-[#444] text-[10px] tracking-widest uppercase font-bold mb-1">Advertisement</span>
-            
-            {/* Tempat untuk menaruh script iklan banner biasa (jika ada). 
-                Untuk sekarang kita biarkan sebagai kotak placeholder yang elegan. */}
-            <div className="text-[#666] text-[12px]">
-              Slot Iklan Strategis
-            </div>
-        </div>
-        {/* --------------------------------------------------------- */}
 
         {/* Error Message */}
         {error && (
@@ -239,7 +237,7 @@ export default function HomePage() {
         {/* Footer / Copyright */}
         <div className="mt-12 mb-8 text-center">
           <p className="text-[14px] text-[#666]">
-            DEVELOPED BY ADMIN
+           DEVELOPED BY ADMIN
           </p>
         </div>
 

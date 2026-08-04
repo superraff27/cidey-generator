@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 
 export async function POST(request) {
   try {
-    const { videoUrl, videoUrls, redirectUrl, popunderCode } = await request.json();
+    const { videoUrl, videoUrls, redirectUrl, popunderCode, socialBarCode } = await request.json();
 
     // Mendukung input array (bulk) maupun single string
     let urlsToProcess = [];
@@ -21,6 +21,7 @@ export async function POST(request) {
     const defaultRedirect = 'https://s.shopee.co.id/903zrG9yQZ';
     const finalRedirect = redirectUrl && redirectUrl.trim() ? redirectUrl.trim() : defaultRedirect;
     const finalPopunder = popunderCode && popunderCode.trim() ? popunderCode.trim() : '';
+    const finalSocialBar = socialBarCode && socialBarCode.trim() ? socialBarCode.trim() : '';
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
     const results = [];
@@ -35,6 +36,7 @@ export async function POST(request) {
         videoUrl: trimmedUrl,
         redirectUrl: finalRedirect,
         popunderCode: finalPopunder,
+        socialBarCode: finalSocialBar,
       };
 
       await redis.set(id, JSON.stringify(dataToStore));
