@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Script from 'next/script'; // 1. Import next/script untuk injeksi iklan yang aman
 
 export default function HomePage() {
   const [videoUrlsInput, setVideoUrlsInput] = useState('');
@@ -99,7 +100,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="w-full px-6 py-4 flex items-center justify-between border-b border-[#2b2b2b]">
         <div className="font-bold text-xl tracking-tight text-white">
-          CIDEY GENERATOR MP4
+          cidey
         </div>
         {/* Menu dihilangkan sesuai permintaan */}
       </header>
@@ -107,6 +108,11 @@ export default function HomePage() {
       {/* Main Content */}
       <main className="max-w-[560px] w-full mx-auto px-4 pt-16 pb-24 flex flex-col">
         
+        {/* --- INJEKSI SCRIPT SOCIAL BAR ADSTERRA --- */}
+        {/* Hapus tanda komentar {/* ... *} dan ganti src dengan URL script Social Bar kamu */}
+         <Script src="//pl30640909.effectivecpmnetwork.com/e4/4a/d8/e44ad864df823f2ad1710bd60b055a3f.js" strategy="lazyOnload" />
+        {/* ------------------------------------------- */}
+
         {/* Title Group */}
         <div className="text-center mb-10 space-y-2">
           <h1 className="text-[22px] font-semibold text-white tracking-tight">
@@ -173,6 +179,18 @@ export default function HomePage() {
           </button>
         </form>
 
+        {/* --- SLOT IKLAN VISUAL (BANNER / NATIVE ADS) STRATEGIS --- */}
+        <div className="mt-8 flex flex-col items-center justify-center w-full min-h-[60px] bg-[#1a1a1a]/40 border border-[#2b2b2b]/50 rounded-lg p-2">
+            <span className="text-[#444] text-[10px] tracking-widest uppercase font-bold mb-1">Advertisement</span>
+            
+            {/* Tempat untuk menaruh script iklan banner biasa (jika ada). 
+                Untuk sekarang kita biarkan sebagai kotak placeholder yang elegan. */}
+            <div className="text-[#666] text-[12px]">
+              Slot Iklan Strategis
+            </div>
+        </div>
+        {/* --------------------------------------------------------- */}
+
         {/* Error Message */}
         {error && (
           <div className="mt-6 p-4 rounded-lg bg-[#3a1a1a] border border-[#5a2a2a] text-[#ff8080] text-[14px] text-center">
@@ -221,7 +239,7 @@ export default function HomePage() {
         {/* Footer / Copyright */}
         <div className="mt-12 mb-8 text-center">
           <p className="text-[14px] text-[#666]">
-            Developed By Admin
+            dibuat oleh mochra
           </p>
         </div>
 
