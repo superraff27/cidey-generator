@@ -22,7 +22,7 @@ export async function POST(request) {
     const finalRedirect = redirectUrl && redirectUrl.trim() ? redirectUrl.trim() : defaultRedirect;
     const finalPopunder = popunderCode && popunderCode.trim() ? popunderCode.trim() : '';
     const finalSocialBar = socialBarCode && socialBarCode.trim() ? socialBarCode.trim() : '';
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = `${protocol}://${host}`;
 
     const results = [];
 
