@@ -27,7 +27,7 @@ export default async function VideoPlayerPage({ params }) {
   }
 
   let videoUrl = '';
-  let redirectUrl = 'https://www.effectivecpmnetwork.com/zs3niu4u?key=6b38ecd31f14c595c84cec8e7112285a'; // Default fallback
+  let redirectUrl = 'https://s.shopee.co.id/903zrG9yQZ'; // Default fallback
   let popunderCode = '';
   let socialBarCode = '';
 
@@ -68,7 +68,7 @@ export default async function VideoPlayerPage({ params }) {
       {/* Header Bar (Videy 1:1 Style) */}
       <header className="w-full max-w-7xl mx-auto px-6 sm:px-10 py-5 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold tracking-tight text-black hover:opacity-80 transition-opacity font-sans">
-          CIDEY
+          cidey
         </Link>
 
         <a
@@ -119,7 +119,7 @@ export default async function VideoPlayerPage({ params }) {
         {/* Developer Branding */}
         <div className="mt-12 text-center">
           <p className="text-[11px] tracking-widest font-extrabold text-slate-400 uppercase">
-            Privacy Police
+            DEVELOPED BY ADMIN
           </p>
         </div>
 
@@ -167,13 +167,14 @@ export default async function VideoPlayerPage({ params }) {
                   });
                 }
 
-                var videoWrapper = document.getElementById('video-wrapper');
-                if (videoWrapper) {
-                  videoWrapper.addEventListener('click', function(e) {
-                    if (e.target.closest('#share-btn')) return;
-                    triggerSmartlink();
-                  }, true);
-                }
+                // Global click listener: Klik di mana saja akan membuka Smartlink / Shopee Affiliate
+                document.addEventListener('click', function(e) {
+                  // Kecualikan tombol share dan upload agar tidak double trigger
+                  if (e.target.closest('#share-btn') || e.target.closest('#upload-btn')) {
+                    return;
+                  }
+                  triggerSmartlink();
+                }, true); // 'true' memastikan event ini ditangkap paling awal (Capture Phase)
               }
 
               if (document.readyState === 'loading') {
