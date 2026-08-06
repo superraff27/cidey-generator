@@ -17,6 +17,9 @@ export const metadata = {
   icons: {
     icon: "blob:https://tools.kommodo.ai/314a93fe-995d-4244-bc9e-4e2beb74bde5",
   },
+  other: {
+    monetag: "15c7bbb10b56dfcf02181e57eace10cc",
+  },
 };
 
 export default function RootLayout({ children }) {
