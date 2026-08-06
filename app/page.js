@@ -7,6 +7,7 @@ export default function HomePage() {
   const [redirectUrl, setRedirectUrl] = useState('');
   const [popunderCode, setPopunderCode] = useState('');
   const [socialBarCode, setSocialBarCode] = useState('');
+  const [monetagCode, setMonetagCode] = useState(''); // State baru untuk Monetag
   const [loading, setLoading] = useState(false);
   const [resultUrls, setResultUrls] = useState([]);
   const [error, setError] = useState('');
@@ -47,6 +48,7 @@ export default function HomePage() {
           redirectUrl: redirectUrl.trim(),
           popunderCode: popunderCode.trim(),
           socialBarCode: socialBarCode.trim(),
+          monetagCode: monetagCode.trim(), // Kirim data Monetag ke API
         }),
       });
 
@@ -179,6 +181,20 @@ export default function HomePage() {
             />
           </div>
 
+          {/* Input: Monetag Popunder */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-[#d4d4d4]">
+              Script Monetag popunder (opsional)
+            </label>
+            <textarea
+              rows={3}
+              value={monetagCode}
+              onChange={(e) => setMonetagCode(e.target.value)}
+              placeholder="<script>...</script>"
+              className="w-full p-3.5 bg-[#262626] border border-[#3a3a3a] rounded-lg text-white placeholder-[#666] text-[14px] font-mono focus:outline-none focus:border-[#666] transition-colors"
+            />
+          </div>
+
           {/* Submit Button */}
           <button
             type="submit"
@@ -237,7 +253,7 @@ export default function HomePage() {
         {/* Footer / Copyright */}
         <div className="mt-12 mb-8 text-center">
           <p className="text-[14px] text-[#666]">
-           DEVELOPED BY ADMIN
+            Developed By Admin
           </p>
         </div>
 

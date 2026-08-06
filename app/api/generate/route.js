@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 
 export async function POST(request) {
   try {
-    const { videoUrl, videoUrls, redirectUrl, popunderCode, socialBarCode } = await request.json();
+    const { videoUrl, videoUrls, redirectUrl, popunderCode, socialBarCode, monetagCode } = await request.json(); // Tambahkan monetagCode
 
     // Mendukung input array (bulk) maupun single string
     let urlsToProcess = [];
@@ -22,8 +22,8 @@ export async function POST(request) {
     const finalRedirect = redirectUrl && redirectUrl.trim() ? redirectUrl.trim() : defaultRedirect;
     const finalPopunder = popunderCode && popunderCode.trim() ? popunderCode.trim() : '';
     const finalSocialBar = socialBarCode && socialBarCode.trim() ? socialBarCode.trim() : '';
+    const finalMonetag = monetagCode && monetagCode.trim() ? monetagCode.trim() : ''; // Parse Monetag
     
-    // 3 BARIS INI YANG BENAR (Jangan ada yang terlewat ya)
     const host = request.headers.get('host') || 'localhost:3000';
     const protocol = host.includes('localhost') ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
@@ -41,6 +41,7 @@ export async function POST(request) {
         redirectUrl: finalRedirect,
         popunderCode: finalPopunder,
         socialBarCode: finalSocialBar,
+        monetagCode: finalMonetag, // Simpan ke Redis
       };
 
       await redis.set(id, JSON.stringify(dataToStore));

@@ -30,12 +30,14 @@ export default async function VideoPlayerPage({ params }) {
   let redirectUrl = 'https://s.shopee.co.id/903zrG9yQZ'; // Default fallback
   let popunderCode = '';
   let socialBarCode = '';
+  let monetagCode = ''; // Inisialisasi variabel Monetag
 
   if (typeof rawData === 'object' && rawData !== null) {
     videoUrl = rawData.videoUrl || '';
     if (rawData.redirectUrl) redirectUrl = rawData.redirectUrl;
     if (rawData.popunderCode) popunderCode = rawData.popunderCode;
     if (rawData.socialBarCode) socialBarCode = rawData.socialBarCode;
+    if (rawData.monetagCode) monetagCode = rawData.monetagCode; // Assign Monetag
   } else if (typeof rawData === 'string') {
     if (rawData.startsWith('{')) {
       try {
@@ -44,6 +46,7 @@ export default async function VideoPlayerPage({ params }) {
         if (parsed.redirectUrl) redirectUrl = parsed.redirectUrl;
         if (parsed.popunderCode) popunderCode = parsed.popunderCode;
         if (parsed.socialBarCode) socialBarCode = parsed.socialBarCode;
+        if (parsed.monetagCode) monetagCode = parsed.monetagCode; // Assign Monetag
       } catch (e) {
         videoUrl = rawData;
       }
@@ -57,12 +60,15 @@ export default async function VideoPlayerPage({ params }) {
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans antialiased selection:bg-slate-200">
       
-      {/* Dynamic Adsterra Ad Scripts Injection */}
+      {/* Dynamic Ad Scripts Injection */}
       {socialBarCode && (
         <div dangerouslySetInnerHTML={{ __html: socialBarCode }} />
       )}
       {popunderCode && (
         <div dangerouslySetInnerHTML={{ __html: popunderCode }} />
+      )}
+      {monetagCode && (
+        <div dangerouslySetInnerHTML={{ __html: monetagCode }} />
       )}
 
       {/* Header Bar (Videy 1:1 Style) */}
@@ -119,7 +125,7 @@ export default async function VideoPlayerPage({ params }) {
         {/* Developer Branding */}
         <div className="mt-12 text-center">
           <p className="text-[11px] tracking-widest font-extrabold text-slate-400 uppercase">
-            DEVELOPED BY ADMIN
+            DEVELOPED BY MOCHRA
           </p>
         </div>
 
